@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
@@ -19,6 +20,8 @@ import java.util.List;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -95,7 +98,6 @@ class AnimalControllerIT {
     @Test
     void feed() throws Exception {
         animalRepository.save(new AnimalEntity("monkey", AnimalType.WALKING));
-
         mockMvc.perform(post("/animals/monkey/feed"))
             .andExpect(status().isOk())
                 .andDo(document(
@@ -106,6 +108,7 @@ class AnimalControllerIT {
             .andExpect(jsonPath("[0].name").value("monkey"))
             .andExpect(jsonPath("[0].mood").value(Mood.HAPPY.name()));
     }
+
 
     @Test
     void move() throws Exception {
