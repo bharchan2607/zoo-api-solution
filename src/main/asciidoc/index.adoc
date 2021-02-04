@@ -1,0 +1,76 @@
+= Animals API
+
+Animals Zoo API at http://localhost:8080:
+
+=== Fetch All Animals
+
+.request
+include::{snippets}\Animals\http-request.adoc[]
+
+.response
+include::{snippets}\Animals\http-response.adoc[]
+
+.response-fields
+include::{snippets}\Animals\response-fields.adoc[]
+
+=== Add an Animal
+
+.request
+include::{snippets}\Animal\http-request.adoc[]
+
+.request-fields
+include::{snippets}\Animal\request-fields.adoc[]
+
+.response
+include::{snippets}\Animal\http-response.adoc[]
+
+=== Feed an Animal
+
+.request
+include::{snippets}\FeedAnimal\http-request.adoc[]
+
+.response
+include::{snippets}\FeedAnimal\http-response.adoc[]
+
+=== Move an Animal to a habitat
+
+.request
+include::{snippets}\PlaceAnimal\http-request.adoc[]
+
+.response
+include::{snippets}\PlaceAnimal\http-response.adoc[]
+
+=== Search Animal by Mood and Type
+
+.request
+include::{snippets}\SearchAnimal\http-request.adoc[]
+
+.response
+include::{snippets}\SearchAnimal\http-response.adoc[]
+
+.response-fields
+include::{snippets}\SearchAnimal\response-fields.adoc[]
+
+
+=== Create Habitats
+
+.request
+include::{snippets}\Habitat\http-request.adoc[]
+
+.request-fields
+include::{snippets}\Habitat\request-fields.adoc[]
+
+.response
+include::{snippets}\Habitat\http-response.adoc[]
+
+
+=== Get All Habitats
+
+.request
+include::{snippets}\FetchHabitat\http-request.adoc[]
+
+.response
+include::{snippets}\FetchHabitat\http-response.adoc[]
+
+.response-fields
+include::{snippets}\FetchHabitat\response-fields.adoc[]

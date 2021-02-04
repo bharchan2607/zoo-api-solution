@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ echo '{"name":"Eagle exhibit","type":"NEST"}' | http POST 'http://localhost:8080/habitats' \
+    'Content-Type:application/json;charset=UTF-8'
+----

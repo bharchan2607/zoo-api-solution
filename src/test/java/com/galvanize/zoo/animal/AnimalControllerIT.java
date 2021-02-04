@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.zoo.habitat.HabitatEntity;
 import com.galvanize.zoo.habitat.HabitatRepository;
 import com.galvanize.zoo.habitat.HabitatType;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -14,6 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.transaction.Transactional;
 import java.util.List;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -22,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 class AnimalControllerIT {
 
     @Autowired
@@ -36,6 +42,7 @@ class AnimalControllerIT {
     @Autowired
     HabitatRepository habitatRepository;
 
+
     @Test
     void create_fetchAll() throws Exception {
         AnimalDto input = new AnimalDto("monkey", AnimalType.WALKING, null, null);
@@ -43,15 +50,33 @@ class AnimalControllerIT {
             post("/animals")
                 .content(objectMapper.writeValueAsString(input))
                 .contentType(MediaType.APPLICATION_JSON)
-        )
-            .andExpect(status().isCreated());
+            )
+            .andExpect(status().isCreated())
+                .andDo(document(
+                        "Animal",
+                        requestFields(
+                                fieldWithPath("name").description("Name of the Animal"),
+                                fieldWithPath("type").description("Type of Animal"),
+                                fieldWithPath("mood").description("Mood of the Animal"),
+                                fieldWithPath("habitat").description("Habitat of Animal")
+                )));
 
         mockMvc.perform(get("/animals"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("length()").value(1))
             .andExpect(jsonPath("[0].name").value("monkey"))
             .andExpect(jsonPath("[0].mood").value(Mood.UNHAPPY.name()))
-            .andExpect(jsonPath("[0].type").value(AnimalType.WALKING.name()));
+            .andExpect(jsonPath("[0].type").value(AnimalType.WALKING.name()))
+                .andDo(document(
+                        "Animals",
+                        responseFields(
+                                fieldWithPath("[]").description("Array of Animals"),
+                                fieldWithPath("[].name").description("Name of the Animal"),
+                                fieldWithPath("[].type").description("Type of Animal"),
+                                fieldWithPath("[].mood").description("Mood of Animal Happy/Unhappy"),
+                                fieldWithPath("[].habitat").description("Habitat of Animal")
+
+                        )));
     }
 
     @Test
@@ -72,7 +97,9 @@ class AnimalControllerIT {
         animalRepository.save(new AnimalEntity("monkey", AnimalType.WALKING));
 
         mockMvc.perform(post("/animals/monkey/feed"))
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+                .andDo(document(
+                        "FeedAnimal"));
 
         mockMvc.perform(get("/animals"))
             .andExpect(status().isOk())
@@ -86,7 +113,9 @@ class AnimalControllerIT {
         habitatRepository.save(new HabitatEntity("Monkey's Jungle", HabitatType.FOREST));
 
         mockMvc.perform(post("/animals/monkey/move").content("Monkey's Jungle"))
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+                .andDo(document(
+                        "PlaceAnimal"));
 
         mockMvc.perform(get("/animals"))
             .andExpect(status().isOk())
@@ -146,6 +175,16 @@ class AnimalControllerIT {
             .andExpect(jsonPath("length()").value(1))
             .andExpect(jsonPath("[0].name").value("chimp"))
             .andExpect(jsonPath("[0].mood").value(Mood.HAPPY.name()))
-            .andExpect(jsonPath("[0].type").value(AnimalType.WALKING.name()));
+            .andExpect(jsonPath("[0].type").value(AnimalType.WALKING.name()))
+                .andDo(document(
+                        "SearchAnimal",
+                        responseFields(
+                                fieldWithPath("[]").description("Array of Animals"),
+                                fieldWithPath("[].name").description("Name of the Animal"),
+                                fieldWithPath("[].type").description("Type of Animal"),
+                                fieldWithPath("[].mood").description("Mood of Animal Happy/Unhappy"),
+                                fieldWithPath("[].habitat").description("Habitat of Animal")
+
+                        )));
     }
 }

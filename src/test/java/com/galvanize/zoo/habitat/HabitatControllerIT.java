@@ -5,6 +5,7 @@ import com.galvanize.zoo.animal.AnimalEntity;
 import com.galvanize.zoo.animal.AnimalType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -12,6 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -20,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 class HabitatControllerIT {
 
     @Autowired
@@ -39,13 +43,27 @@ class HabitatControllerIT {
                 .content(objectMapper.writeValueAsString(input))
                 .contentType(MediaType.APPLICATION_JSON)
         )
-            .andExpect(status().isCreated());
+            .andExpect(status().isCreated())
+                .andDo(document(
+                        "Habitat",
+                        requestFields(
+                                fieldWithPath("name").description("Name of the Habitat"),
+                                fieldWithPath("type").description("Type of the Habitat")
+                        )));
+
 
         mockMvc.perform(get("/habitats"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("length()").value(1))
             .andExpect(jsonPath("[0].name").value("Eagle exhibit"))
-            .andExpect(jsonPath("[0].type").value(HabitatType.NEST.name()));
+            .andExpect(jsonPath("[0].type").value(HabitatType.NEST.name()))
+                .andDo(document(
+                        "FetchHabitat",
+                        responseFields(
+                                fieldWithPath("[]").description("Array of Habitats"),
+                                fieldWithPath("[].name").description("Name of the Habitat"),
+                                fieldWithPath("[].type").description("Type of Habitat")
+                        )));
     }
 
     @Test
