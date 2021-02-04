@@ -29,6 +29,9 @@ include::{snippets}\Animal\http-response.adoc[]
 .request
 include::{snippets}\FeedAnimal\http-request.adoc[]
 
+.path-fields
+include::{snippets}\FeedAnimal\path-parameters.adoc[]
+
 .response
 include::{snippets}\FeedAnimal\http-response.adoc[]
 

@@ -1,0 +1,8 @@
+.+/animals/{name}/feed+
+|===
+|Parameter|Description
+
+|`+name+`
+|Name of Animal
+
+|===
