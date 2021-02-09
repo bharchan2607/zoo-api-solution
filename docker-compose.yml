@@ -1,0 +1,16 @@
+version: "3"
+services:
+  zoodb:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+  zoo:
+    build: .
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+    depends_on:
+      - zoodb
+    ports:
+      - "8080:8080"
